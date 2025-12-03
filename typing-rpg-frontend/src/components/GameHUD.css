@@ -1,0 +1,58 @@
+/* ============================================
+   GameHUD.css - 게임 HUD 스타일
+   ============================================ */
+
+/* HUD 전체 컨테이너 */
+.game-hud {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px 30px;
+  background: var(--color-bg-dark);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* 개별 HUD 아이템 */
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+/* 라벨 */
+.hud-label {
+  font-size: 12px;
+  color: var(--color-text-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 값 */
+.hud-value {
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* WPM (주황색) */
+.hud-wpm {
+  color: #ff9966;
+}
+
+/* 정확도 (초록색) */
+.hud-accuracy {
+  color: var(--color-correct);
+}
+
+/* 오타 (빨강색) */
+.hud-errors {
+  color: var(--color-incorrect);
+}
+
+/* 시간 (파랑색) */
+.hud-time {
+  color: var(--color-exp);
+}

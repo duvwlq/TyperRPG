@@ -1,0 +1,162 @@
+/* ============================================
+   Ranking.css - =@ RPG §¿| ≠π òt¿
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@300;600&display=swap');
+
+/* ¥ ËLt */
+.pixel-ranking-container {
+  min-height: 100vh;
+  background: #3f4a44;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 18px;
+}
+
+/* ò| */
+.pixel-ranking-wrapper {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* t‹ */
+.pixel-ranking-card {
+  background: linear-gradient(180deg, #3e4a44 0%, #39443f 100%);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+/* © */
+.pixel-ranking-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 32px;
+  color: #d4a574;
+  text-align: center;
+  margin: 0 0 10px 0;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+  letter-spacing: 3px;
+}
+
+.pixel-ranking-subtitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  color: #cfd9cf;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* ≠π ¨§∏ */
+.pixel-ranking-list {
+  background: #dfe8e3;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* ≠π Dt\ */
+.pixel-ranking-item {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px 120px 100px;
+  gap: 15px;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.pixel-ranking-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(4px);
+}
+
+/* ¡ 3 πƒ §¿| */
+.pixel-ranking-item.top-rank {
+  background: rgba(255, 215, 0, 0.15);
+  border-width: 3px;
+}
+
+.pixel-ranking-item.top-rank:hover {
+  background: rgba(255, 215, 0, 0.25);
+}
+
+/*  à8 */
+.pixel-rank-number {
+  font-family: "Press Start 2P", monospace;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* …$Ñ */
+.pixel-rank-nickname {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2b2b2b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ® */
+.pixel-rank-level {
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+
+/*  */
+.pixel-rank-score {
+  font-family: "Press Start 2P", monospace;
+  font-size: 14px;
+  color: #d4a574;
+  font-weight: bold;
+  text-align: right;
+}
+
+/* WPM */
+.pixel-rank-wpm {
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  color: #2b2b2b;
+  text-align: center;
+  background: rgba(212, 165, 116, 0.2);
+  padding: 6px;
+  border-radius: 4px;
+}
+
+/* XË Ù */
+.pixel-ranking-footer {
+  font-size: 11px;
+  color: #9aa39c;
+  text-align: center;
+  font-family: "Nunito", sans-serif;
+}
+
+/* Q */
+@media (max-width: 800px) {
+  .pixel-ranking-item {
+    grid-template-columns: 50px 1fr 70px;
+    gap: 10px;
+  }
+
+  .pixel-rank-score,
+  .pixel-rank-wpm {
+    display: none;
+  }
+
+  .pixel-ranking-title {
+    font-size: 24px;
+  }
+
+  .pixel-rank-number {
+    font-size: 18px;
+  }
+}

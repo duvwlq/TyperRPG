@@ -1,0 +1,210 @@
+/* ============================================
+   ContentSelect.css - 픽셀 RPG 스타일 콘텐츠 선택 페이지
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@300;600&display=swap');
+
+/* 전체 컨테이너 */
+.pixel-content-container {
+  min-height: 100vh;
+  background: #3f4a44;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 18px;
+}
+
+/* 래퍼 */
+.pixel-content-wrapper {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* 카드 */
+.pixel-content-card {
+  background: linear-gradient(180deg, #3e4a44 0%, #39443f 100%);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+/* 제목 */
+.pixel-content-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 28px;
+  color: #d4a574;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
+}
+
+/* 레이아웃 (좌우 분할) */
+.pixel-content-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 25px;
+}
+
+/* ========== 좌측: 콘텐츠 목록 ========== */
+
+.pixel-content-list {
+  background: #dfe8e3;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.pixel-list-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 14px;
+  color: #2b2b2b;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+/* 콘텐츠 아이템 */
+.pixel-content-item {
+  padding: 12px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pixel-content-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(4px);
+}
+
+.pixel-content-item.selected {
+  background: #d4a574;
+  border-color: #b8884f;
+  transform: translateX(8px);
+}
+
+.pixel-item-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2b2b2b;
+}
+
+.pixel-content-item.selected .pixel-item-title {
+  color: #fff;
+}
+
+.pixel-item-difficulty {
+  font-size: 11px;
+  font-weight: bold;
+  font-family: "Press Start 2P", monospace;
+}
+
+/* ========== 우측: 콘텐츠 상세 ========== */
+
+.pixel-content-detail {
+  background: #dfe8e3;
+  border-radius: 10px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pixel-detail-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 24px;
+  color: #2b2b2b;
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.pixel-detail-description {
+  font-size: 15px;
+  color: #2b2b2b;
+  line-height: 1.6;
+  text-align: center;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+/* 통계 */
+.pixel-detail-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+.pixel-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+}
+
+.pixel-stat-label {
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pixel-stat-value {
+  color: #2b2b2b;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: "Press Start 2P", monospace;
+}
+
+/* 시작 버튼 */
+.pixel-start-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 16px;
+  color: #2b2b2b;
+  background: linear-gradient(180deg, #d4a574, #b8884f);
+  padding: 16px 40px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.pixel-start-btn:hover {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.pixel-start-btn:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 반응형 */
+@media (max-width: 800px) {
+  .pixel-content-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .pixel-content-list {
+    max-width: 100%;
+  }
+
+  .pixel-content-title {
+    font-size: 20px;
+  }
+
+  .pixel-detail-title {
+    font-size: 18px;
+  }
+}

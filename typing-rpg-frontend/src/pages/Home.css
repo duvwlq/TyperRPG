@@ -1,0 +1,145 @@
+/* ============================================
+   Home.css - 픽셀 RPG 스타일 홈 페이지
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@300;600&display=swap');
+
+/* 전체 컨테이너 */
+.pixel-home-container {
+  min-height: 100vh;
+  background: #3f4a44;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 18px;
+}
+
+/* 홈 래퍼 */
+.pixel-home-wrapper {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* 홈 카드 */
+.pixel-home-card {
+  background: linear-gradient(180deg, #3e4a44 0%, #39443f 100%);
+  border-radius: 12px;
+  padding: 40px 30px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+/* 로고/제목 영역 */
+.pixel-home-logo {
+  margin-bottom: 30px;
+}
+
+.pixel-home-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 36px;
+  color: #d4a574;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+  margin: 0 0 15px 0;
+  letter-spacing: 2px;
+}
+
+.pixel-home-subtitle {
+  font-family: "Press Start 2P", monospace;
+  font-size: 14px;
+  color: #cfd9cf;
+  letter-spacing: 1px;
+}
+
+/* 중앙 패널 */
+.pixel-home-panel {
+  background: #dfe8e3;
+  border-radius: 10px;
+  padding: 35px 25px;
+  margin-bottom: 25px;
+}
+
+.pixel-home-message {
+  font-size: 16px;
+  color: #2b2b2b;
+  margin-bottom: 30px;
+  line-height: 1.8;
+  font-weight: 600;
+}
+
+/* 시작 버튼 */
+.pixel-home-btn {
+  display: inline-block;
+  font-family: "Press Start 2P", monospace;
+  font-size: 18px;
+  color: #2b2b2b;
+  background: linear-gradient(180deg, #d4a574, #b8884f);
+  padding: 18px 50px;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+  margin-bottom: 30px;
+}
+
+.pixel-home-btn:hover {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.pixel-home-btn:active {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 추가 정보 */
+.pixel-home-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.pixel-home-info-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #2b2b2b;
+}
+
+.pixel-home-info-label {
+  font-size: 18px;
+}
+
+/* 하단 정보 */
+.pixel-home-footer {
+  font-size: 11px;
+  color: #9aa39c;
+  font-family: "Nunito", sans-serif;
+}
+
+/* 반응형 */
+@media (max-width: 760px) {
+  .pixel-home-title {
+    font-size: 24px;
+  }
+
+  .pixel-home-subtitle {
+    font-size: 11px;
+  }
+
+  .pixel-home-btn {
+    font-size: 14px;
+    padding: 14px 35px;
+  }
+
+  .pixel-home-message {
+    font-size: 14px;
+  }
+}

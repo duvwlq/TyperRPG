@@ -1,0 +1,73 @@
+/* ============================================
+   HealthBar.css - 체력바 스타일
+   ============================================ */
+
+/* 체력바 전체 컨테이너 */
+.health-bar-container {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* 라벨 영역 */
+.health-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* 이름 */
+.health-bar-name {
+  color: var(--color-text-light);
+  font-weight: bold;
+}
+
+/* 수치 */
+.health-bar-value {
+  color: var(--color-text-gray);
+  font-size: 12px;
+}
+
+/* 체력바 배경 */
+.health-bar-bg {
+  width: 100%;
+  height: 24px;
+  background: var(--color-bg-dark);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 체력바 채우기 */
+.health-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease-out;
+  position: relative;
+}
+
+/* 빨강 (플레이어 HP) */
+.health-bar-red {
+  background: linear-gradient(90deg, #ff4444 0%, #ff6666 100%);
+}
+
+/* 파랑 (몬스터 HP) */
+.health-bar-blue {
+  background: linear-gradient(90deg, #4444ff 0%, #6666ff 100%);
+}
+
+/* 초록 (회복 등) */
+.health-bar-green {
+  background: linear-gradient(90deg, #44ff44 0%, #66ff66 100%);
+}
+
+/* 반짝이는 효과 */
+.health-bar-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+}

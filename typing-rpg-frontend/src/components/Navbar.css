@@ -1,0 +1,87 @@
+/* ============================================
+   Navbar.css - 네비게이션 바 스타일
+   ============================================ */
+
+/* 네비게이션 바 전체 컨테이너 */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  height: 60px;
+  background: var(--color-bg-panel);
+  border-bottom: 3px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 로고 영역 */
+.navbar-logo a {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-primary);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.navbar-logo a:hover {
+  color: var(--color-text-light);
+}
+
+/* 메뉴 리스트 */
+.navbar-menu {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 메뉴 아이템 */
+.navbar-menu li {
+  margin: 0;
+}
+
+.navbar-menu a {
+  color: var(--color-text-gray);
+  text-decoration: none;
+  font-size: 16px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+/* 메뉴 hover 효과 */
+.navbar-menu a:hover {
+  color: var(--color-text-light);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 활성화된 메뉴 (현재 페이지) */
+.navbar-menu a.active {
+  color: var(--color-text-light);
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+/* 플레이어 정보 */
+.navbar-player {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar-level,
+.navbar-gold {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--color-text-light);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.navbar-gold {
+  background: rgba(212, 165, 116, 0.2);
+  color: #d4a574;
+}

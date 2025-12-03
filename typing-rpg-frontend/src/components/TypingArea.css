@@ -1,0 +1,79 @@
+/* ============================================
+   TypingArea.css - 타이핑 영역 스타일
+   ============================================ */
+
+/* 타이핑 영역 전체 컨테이너 */
+.typing-area {
+  background: var(--color-bg-dark);
+  border: 3px solid var(--color-border);
+  border-radius: 12px;
+  padding: 30px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: text;
+  position: relative;
+}
+
+/* 안내 메시지 */
+.typing-instruction {
+  text-align: center;
+  color: var(--color-text-gray);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* 타이핑 텍스트 영역 */
+.typing-text {
+  font-size: 28px;
+  line-height: 1.8;
+  text-align: center;
+  letter-spacing: 1px;
+  min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 개별 글자 */
+.typing-char {
+  transition: all 0.1s;
+  padding: 2px 1px;
+}
+
+/* 아직 입력 안 한 글자 (회색) */
+.typing-char-pending {
+  color: var(--color-text-gray);
+}
+
+/* 정답 (초록색) */
+.typing-char-correct {
+  color: var(--color-correct);
+  font-weight: bold;
+}
+
+/* 오답 (빨강색) */
+.typing-char-incorrect {
+  color: var(--color-incorrect);
+  font-weight: bold;
+  text-decoration: underline wavy;
+}
+
+/* 숨겨진 입력 필드 */
+.typing-input-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 입력 안내 */
+.typing-hint {
+  text-align: center;
+  color: var(--color-text-gray);
+  font-size: 12px;
+  margin-top: 20px;
+  opacity: 0.7;
+}
