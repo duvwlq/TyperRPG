@@ -185,29 +185,3 @@
 }
 
 /* 반응형 */
-@media (max-width: 800px) {
-  .pixel-shop-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
-  }
-
-  .pixel-shop-title {
-    font-size: 24px;
-  }
-
-  .pixel-gold-label {
-    font-size: 11px;
-  }
-
-  .pixel-gold-value {
-    font-size: 13px;
-  }
-
-  .pixel-item-icon {
-    font-size: 36px;
-  }
-
-  .pixel-item-name {
-    font-size: 12px;
-  }
-}

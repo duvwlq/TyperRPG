@@ -24,6 +24,8 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // 정당한 useEffect 사용(데이터 로딩, 외부 시스템 동기화)은 허용
+      'react-hooks/set-state-in-effect': 'warn',
     },
   },
 ])

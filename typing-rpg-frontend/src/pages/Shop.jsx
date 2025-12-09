@@ -9,7 +9,7 @@ import { addItemToInventory } from '../utils/storage'
 import './Shop.css'
 
 function Shop() {
-  const { player, updatePlayer } = useGame()
+  const { player, spendGold, increaseStats, addItem } = useGame()
   const [selectedType, setSelectedType] = useState('all') // all, weapon, armor
 
   // 타입별 필터링
@@ -21,23 +21,23 @@ function Shop() {
   const handleBuy = (item) => {
     if (player.gold >= item.price) {
       // 골드 차감
-      const newGold = player.gold - item.price
+      const success = spendGold(item.price)
+
+      if (!success) {
+        alert('골드가 부족합니다!')
+        return
+      }
 
       // 스탯 적용
-      let updatedPlayer = { gold: newGold }
+      increaseStats({
+        atk: item.stats.atk || 0,
+        maxHp: item.stats.maxHp || 0
+      })
 
-      if (item.stats.atk) {
-        updatedPlayer.atk = player.atk + item.stats.atk
-      }
-      if (item.stats.maxHp) {
-        updatedPlayer.maxHp = player.maxHp + item.stats.maxHp
-        updatedPlayer.hp = player.hp + item.stats.maxHp // 현재 HP도 증가
-      }
+      // GameContext의 인벤토리에 추가
+      addItem(item)
 
-      // 플레이어 업데이트
-      updatePlayer(updatedPlayer)
-
-      // 인벤토리에 추가
+      // LocalStorage에도 저장
       addItemToInventory(item)
 
       alert(`${item.name}을(를) 구매했습니다!`)

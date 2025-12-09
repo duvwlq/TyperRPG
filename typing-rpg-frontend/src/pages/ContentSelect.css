@@ -189,22 +189,3 @@
   transform: translateY(5px);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
 }
-
-/* 반응형 */
-@media (max-width: 800px) {
-  .pixel-content-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .pixel-content-list {
-    max-width: 100%;
-  }
-
-  .pixel-content-title {
-    font-size: 20px;
-  }
-
-  .pixel-detail-title {
-    font-size: 18px;
-  }
-}

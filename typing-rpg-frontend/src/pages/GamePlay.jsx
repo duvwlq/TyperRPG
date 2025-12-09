@@ -2,7 +2,7 @@
    GamePlay.jsx - 픽셀 RPG 스타일 게임 플레이 화면
    ============================================ */
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { getContentById } from '../data/sentences'
@@ -35,9 +35,6 @@ function GamePlay() {
   const [started, setStarted] = useState(false)
   const timerRef = useRef(null)
   const startTimeRef = useRef(null)
-
-  // CPM (분당 글자수)
-  const [cpm, setCpm] = useState(0)
 
   // 입력 상태
   const [inputValue, setInputValue] = useState('')
@@ -72,6 +69,32 @@ function GamePlay() {
       }
     }
   }, [contentId, navigate]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ========== 타이핑 Hook ==========
+
+  const currentSentence = content ? content.sentences[currentSentenceIndex] : ''
+
+  // 순환 참조 방지를 위한 ref들
+  const sentenceCompleteRef = useRef(null)
+  const resetRef = useRef(null)
+
+  const {
+    input,
+    elapsedTime,
+    wpm,
+    accuracy,
+    errors,
+    isComplete: _isComplete,
+    characterStatus,
+    handleKeyPress,
+    setInputValue: setTypingInput,
+    reset
+  } = useTyping(currentSentence, (sentenceResult) => {
+    // ref를 통해 실제 콜백 호출
+    if (sentenceCompleteRef.current) {
+      sentenceCompleteRef.current(sentenceResult)
+    }
+  })
 
   // ========== 게임 종료 ==========
 
@@ -147,7 +170,10 @@ function GamePlay() {
         setInputValue('')
         setIsWrongInput(false)
         setIsComposing(false)
-        reset()
+        // ref를 통해 reset 호출 (순환 참조 방지)
+        if (resetRef.current) {
+          resetRef.current()
+        }
       }, 300)
     } else {
       // 모든 문장 완료
@@ -155,24 +181,13 @@ function GamePlay() {
         endGame(true, sentenceResult)
       }, 300)
     }
-  }, [player.atk, monster, endGame, currentSentenceIndex, content, reset])
+  }, [player.atk, monster, endGame, currentSentenceIndex, content])  // reset 제거!
 
-  // ========== 타이핑 Hook ==========
-
-  const currentSentence = content ? content.sentences[currentSentenceIndex] : ''
-
-  const {
-    input,
-    elapsedTime,
-    wpm,
-    accuracy,
-    errors,
-    isComplete: _isComplete,
-    characterStatus,
-    handleKeyPress,
-    setInputValue: setTypingInput,
-    reset
-  } = useTyping(currentSentence, handleSentenceComplete)
+  // ref 업데이트 (useEffect에서 처리)
+  useEffect(() => {
+    resetRef.current = reset
+    sentenceCompleteRef.current = handleSentenceComplete
+  }, [reset, handleSentenceComplete])
 
   // ========== 타이머 시작 ==========
 
@@ -200,12 +215,13 @@ function GamePlay() {
 
   // ========== CPM 계산 ==========
 
-  useEffect(() => {
+  const cpm = useMemo(() => {
     if (elapsedTime > 0) {
       const minutes = elapsedTime / 60
       const calculatedCpm = Math.round((input.length / minutes) * 10) / 10
-      setCpm(calculatedCpm || 0)
+      return calculatedCpm || 0
     }
+    return 0
   }, [input, elapsedTime])
 
   // ========== 오타 시 HP 감소 ==========
@@ -236,7 +252,6 @@ function GamePlay() {
     setCompletedSentences(0)
     setRemaining(totalTime)
     setStarted(false)
-    setCpm(0)
     setInputValue('')
 
     // 몬스터 리셋

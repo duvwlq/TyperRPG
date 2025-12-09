@@ -28,6 +28,17 @@
   --color-gold: #ffcc66;           /* 골드 (노랑) */
   --color-correct: #66ff66;        /* 정답 (초록) */
   --color-incorrect: #ff6666;      /* 오답 (빨강) */
+
+  /* 픽셀 게임 스타일 색상 */
+  --pixel-bg: linear-gradient(180deg, #6a7a5d 0%, #4a5a3d 100%);
+  --pixel-text-light: #cfd9cf;
+  --pixel-text-dark: #2b2b2b;
+  --pixel-hud-dark: rgba(47, 59, 55, 0.9);
+  --pixel-panel: #f2f2f2;
+  --pixel-muted: #7f856f;
+  --pixel-accent: #789079;
+  --pixel-hp: #ff6666;             /* HP 바 색상 */
+  --pixel-mp: #66b3ff;             /* MP 바 색상 */
 }
 
 /* ============================================

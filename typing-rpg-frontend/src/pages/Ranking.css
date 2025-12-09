@@ -141,22 +141,3 @@
 }
 
 /* Q */
-@media (max-width: 800px) {
-  .pixel-ranking-item {
-    grid-template-columns: 50px 1fr 70px;
-    gap: 10px;
-  }
-
-  .pixel-rank-score,
-  .pixel-rank-wpm {
-    display: none;
-  }
-
-  .pixel-ranking-title {
-    font-size: 24px;
-  }
-
-  .pixel-rank-number {
-    font-size: 18px;
-  }
-}
