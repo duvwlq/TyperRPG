@@ -73,48 +73,6 @@ function GamePlayBoss() {
     }
   }, [contentId, navigate]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ========== 타이핑 Hook ==========
-
-  const currentSentence = content ? content.sentences[currentSentenceIndex] : ''
-
-    const {
-        input,
-        elapsedTime,
-        wpm,
-        accuracy,
-        errors,
-        isComplete: _isComplete,
-        characterStatus,
-        handleKeyPress,
-        setInputValue: setTypingInput,
-        reset
-    } = useTyping(currentSentence, handleSentenceComplete)
-
-
-  // ========== 타이머 시작 ==========
-
-  const startTimer = () => {
-    if (started) return
-    setStarted(true)
-    startTimeRef.current = Date.now()
-
-    timerRef.current = setInterval(() => {
-      setRemaining(prev => {
-        if (prev <= 1) {
-          // 시간 종료 - 패배
-          clearInterval(timerRef.current)
-          endGame(false, {
-            wpm,
-            accuracy,
-            elapsedTime
-          })
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-  }
-
   // ========== 게임 종료 ==========
 
   const endGame = useCallback((isVictory, finalStats) => {
@@ -162,16 +120,6 @@ function GamePlayBoss() {
     })
   }, [completedSentences, player.level, content, gainExp, gainGold, addScore])
 
-  // ========== CPM 계산 ==========
-
-  useEffect(() => {
-    if (elapsedTime > 0) {
-      const minutes = elapsedTime / 60
-      const calculatedCpm = Math.round((input.length / minutes) * 10) / 10
-      setCpm(calculatedCpm || 0)
-    }
-  }, [input, elapsedTime])
-
   // ========== 문장 완료 처리 ==========
 
   const handleSentenceComplete = useCallback((sentenceResult) => {
@@ -208,6 +156,58 @@ function GamePlayBoss() {
       }, 300)
     }
   }, [player.atk, monster, endGame, currentSentenceIndex, content, reset])
+
+  // ========== 타이핑 Hook ==========
+
+  const currentSentence = content ? content.sentences[currentSentenceIndex] : ''
+
+    const {
+        input,
+        elapsedTime,
+        wpm,
+        accuracy,
+        errors,
+        isComplete: _isComplete,
+        characterStatus,
+        handleKeyPress,
+        setInputValue: setTypingInput,
+        reset
+    } = useTyping(currentSentence, handleSentenceComplete)
+
+
+  // ========== 타이머 시작 ==========
+
+  const startTimer = () => {
+    if (started) return
+    setStarted(true)
+    startTimeRef.current = Date.now()
+
+    timerRef.current = setInterval(() => {
+      setRemaining(prev => {
+        if (prev <= 1) {
+          // 시간 종료 - 패배
+          clearInterval(timerRef.current)
+          endGame(false, {
+            wpm,
+            accuracy,
+            elapsedTime
+          })
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  // ========== CPM 계산 ==========
+
+  useEffect(() => {
+    if (elapsedTime > 0) {
+      const minutes = elapsedTime / 60
+      const calculatedCpm = Math.round((input.length / minutes) * 10) / 10
+      setCpm(calculatedCpm || 0)
+    }
+  }, [input, elapsedTime])
 
   // ========== 오타 시 HP 감소 ==========
 
