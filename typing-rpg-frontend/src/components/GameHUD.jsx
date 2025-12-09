@@ -2,7 +2,18 @@
    GameHUD.jsx - 게임 상단 정보 표시
    ============================================ */
 
+import { memo } from 'react'
 import './GameHUD.css'
+
+/**
+ * 시간을 MM:SS 형식으로 변환
+ * 컴포넌트 외부에 정의하여 매번 재생성되지 않도록 함
+ */
+const formatTime = (seconds) => {
+  const mins = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+}
 
 /**
  * GameHUD - 게임 플레이 중 상단에 표시되는 정보
@@ -13,14 +24,6 @@ import './GameHUD.css'
  * @param {number} elapsedTime - 경과 시간 (초)
  */
 function GameHUD({ wpm, accuracy, errors, elapsedTime }) {
-  /**
-   * 시간을 MM:SS 형식으로 변환
-   */
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
 
   return (
     <div className="game-hud">
@@ -51,4 +54,5 @@ function GameHUD({ wpm, accuracy, errors, elapsedTime }) {
   )
 }
 
-export default GameHUD
+// React.memo로 감싸서 props가 변경될 때만 리렌더링
+export default memo(GameHUD)

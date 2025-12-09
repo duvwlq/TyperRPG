@@ -13,7 +13,8 @@ import './TypingArea.css'
  * @param {function} onKeyPress - 키 입력 핸들러
  * @param {string} input - 현재 입력 텍스트
  */
-function TypingArea({ targetText, characterStatus, onKeyPress, input }) {
+// eslint-disable-next-line no-unused-vars
+function TypingArea({ targetText: _targetText, characterStatus, onKeyPress, input }) {
   // 입력 필드 참조 (자동 포커스용)
   const inputRef = useRef(null)
 

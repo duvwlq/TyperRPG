@@ -2,23 +2,20 @@
    Ranking.jsx - 픽셀 RPG 스타일 랭킹 페이지
    ============================================ */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { loadRankings } from '../utils/storage'
 import './Ranking.css'
 
 function Ranking() {
-  const [rankings, setRankings] = useState([])
-
-  // 랭킹 데이터 로드
-  useEffect(() => {
+  // 랭킹 데이터 로드 (초기값으로 계산)
+  const [rankings] = useState(() => {
     const data = loadRankings()
     // 순위 번호 추가
-    const rankedData = data.map((item, index) => ({
+    return data.map((item, index) => ({
       ...item,
       rank: index + 1
     }))
-    setRankings(rankedData)
-  }, [])
+  })
 
   // 메달 색상
   const getMedalColor = (rank) => {

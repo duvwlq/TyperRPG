@@ -2,6 +2,7 @@
    HealthBar.jsx - 체력바 컴포넌트
    ============================================ */
 
+import { memo } from 'react'
 import './HealthBar.css'
 
 /**
@@ -41,4 +42,5 @@ function HealthBar({ label, current, max, color = 'red' }) {
   )
 }
 
-export default HealthBar
+// React.memo로 감싸서 props가 변경될 때만 리렌더링
+export default memo(HealthBar)

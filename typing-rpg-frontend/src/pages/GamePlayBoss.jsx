@@ -2,7 +2,7 @@
    GamePlayBoss.jsx - 픽셀 RPG 스타일 BOSS 전투 화면
    ============================================ */
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { getContentById } from '../data/sentences'
@@ -26,7 +26,7 @@ function GamePlayBoss() {
   const [monster, setMonster] = useState(null)
   const [completedSentences, setCompletedSentences] = useState(0)
   const [gameOver, setGameOver] = useState(false)
-  const [victory, setVictory] = useState(false)
+  const [_victory, setVictory] = useState(false)
   const [result, setResult] = useState(null)
 
   // 타이머 (카운트다운, 60초)
@@ -42,7 +42,7 @@ function GamePlayBoss() {
   // 입력 상태
   const [inputValue, setInputValue] = useState('')
   const [isWrongInput, setIsWrongInput] = useState(false)
-  const [isComposing, setIsComposing] = useState(false)
+  const [_isComposing, setIsComposing] = useState(false)
 
   // ========== 초기화 ==========
 
@@ -83,7 +83,7 @@ function GamePlayBoss() {
         wpm,
         accuracy,
         errors,
-        isComplete,
+        isComplete: _isComplete,
         characterStatus,
         handleKeyPress,
         setInputValue: setTypingInput,
@@ -115,74 +115,9 @@ function GamePlayBoss() {
     }, 1000)
   }
 
-  // ========== CPM 계산 ==========
-
-  useEffect(() => {
-    if (elapsedTime > 0) {
-      const minutes = elapsedTime / 60
-      const calculatedCpm = Math.round((input.length / minutes) * 10) / 10
-      setCpm(calculatedCpm || 0)
-    }
-  }, [input, elapsedTime])
-
-  // ========== 문장 완료 처리 ==========
-
-  function handleSentenceComplete(sentenceResult) {
-    // 몬스터에게 데미지 (WPM 기반)
-    const damage = calculateDamage(player.atk, sentenceResult.accuracy, sentenceResult.wpm)
-    const newMonsterHp = Math.max(0, monster.hp - damage)
-
-    setMonster(prev => ({
-      ...prev,
-      hp: newMonsterHp
-    }))
-
-    setCompletedSentences(prev => prev + 1)
-
-    // 몬스터 처치 확인
-    if (newMonsterHp <= 0) {
-      endGame(true, sentenceResult)
-      return
-    }
-
-    // 다음 문장으로
-    if (currentSentenceIndex + 1 < content.sentences.length) {
-      setTimeout(() => {
-        setCurrentSentenceIndex(prev => prev + 1)
-        setInputValue('')
-        setIsWrongInput(false)
-        setIsComposing(false)
-        reset()
-      }, 300)
-    } else {
-      // 모든 문장 완료
-      setTimeout(() => {
-        endGame(true, sentenceResult)
-      }, 300)
-    }
-  }
-
-  // ========== 오타 시 HP 감소 ==========
-
-  useEffect(() => {
-    if (errors > 0 && !gameOver) {
-      const errorDamage = 5
-      takeDamage(errorDamage)
-
-      // 플레이어 사망 확인
-      if (player.hp - errorDamage <= 0) {
-        endGame(false, {
-          wpm,
-          accuracy,
-          elapsedTime
-        })
-      }
-    }
-  }, [errors]) // eslint-disable-line react-hooks/exhaustive-deps
-
   // ========== 게임 종료 ==========
 
-  function endGame(isVictory, finalStats) {
+  const endGame = useCallback((isVictory, finalStats) => {
     // 타이머 정지
     if (timerRef.current) {
       clearInterval(timerRef.current)
@@ -225,7 +160,72 @@ function GamePlayBoss() {
       gold: goldGained,
       levelUp
     })
-  }
+  }, [completedSentences, player.level, content, gainExp, gainGold, addScore])
+
+  // ========== CPM 계산 ==========
+
+  useEffect(() => {
+    if (elapsedTime > 0) {
+      const minutes = elapsedTime / 60
+      const calculatedCpm = Math.round((input.length / minutes) * 10) / 10
+      setCpm(calculatedCpm || 0)
+    }
+  }, [input, elapsedTime])
+
+  // ========== 문장 완료 처리 ==========
+
+  const handleSentenceComplete = useCallback((sentenceResult) => {
+    // 몬스터에게 데미지 (WPM 기반)
+    const damage = calculateDamage(player.atk, sentenceResult.accuracy, sentenceResult.wpm)
+    const newMonsterHp = Math.max(0, monster.hp - damage)
+
+    setMonster(prev => ({
+      ...prev,
+      hp: newMonsterHp
+    }))
+
+    setCompletedSentences(prev => prev + 1)
+
+    // 몬스터 처치 확인
+    if (newMonsterHp <= 0) {
+      endGame(true, sentenceResult)
+      return
+    }
+
+    // 다음 문장으로
+    if (currentSentenceIndex + 1 < content.sentences.length) {
+      setTimeout(() => {
+        setCurrentSentenceIndex(prev => prev + 1)
+        setInputValue('')
+        setIsWrongInput(false)
+        setIsComposing(false)
+        reset()
+      }, 300)
+    } else {
+      // 모든 문장 완료
+      setTimeout(() => {
+        endGame(true, sentenceResult)
+      }, 300)
+    }
+  }, [player.atk, monster, endGame, currentSentenceIndex, content, reset])
+
+  // ========== 오타 시 HP 감소 ==========
+
+  useEffect(() => {
+    if (errors > 0 && !gameOver) {
+      const errorDamage = 5
+      takeDamage(errorDamage)
+
+      // 플레이어 사망 확인
+      if (player.hp - errorDamage <= 0) {
+        endGame(false, {
+          wpm,
+          accuracy,
+          elapsedTime
+        })
+      }
+    }
+  }, [errors]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ========== 다시 하기 ==========
 

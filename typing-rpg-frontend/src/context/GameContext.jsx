@@ -2,7 +2,7 @@
    GameContext.jsx - 게임 전역 상태 관리
    ============================================ */
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo } from 'react'
 
 // Context 생성
 const GameContext = createContext()
@@ -36,19 +36,19 @@ export function GameProvider({ children }) {
   /**
    * 닉네임 설정
    */
-  const setNickname = (nickname) => {
+  const setNickname = useCallback((nickname) => {
     setPlayer(prev => ({
       ...prev,
       nickname
     }))
-  }
+  }, [])
 
   /**
    * 경험치 획득 (레벨업 자동 처리)
    *
    * @param {number} exp - 획득할 경험치
    */
-  const gainExp = (exp) => {
+  const gainExp = useCallback((exp) => {
     setPlayer(prev => {
       let newExp = prev.exp + exp
       let newLevel = prev.level
@@ -74,19 +74,19 @@ export function GameProvider({ children }) {
         hp: newMaxHp  // 레벨업 시 체력 완전 회복
       }
     })
-  }
+  }, [])
 
   /**
    * 골드 획득
    *
    * @param {number} gold - 획득할 골드
    */
-  const gainGold = (gold) => {
+  const gainGold = useCallback((gold) => {
     setPlayer(prev => ({
       ...prev,
       gold: prev.gold + gold
     }))
-  }
+  }, [])
 
   /**
    * 골드 소비 (상점 구매 등)
@@ -94,7 +94,7 @@ export function GameProvider({ children }) {
    * @param {number} gold - 소비할 골드
    * @returns {boolean} 성공 여부
    */
-  const spendGold = (gold) => {
+  const spendGold = useCallback((gold) => {
     if (player.gold < gold) {
       return false  // 골드 부족
     }
@@ -105,58 +105,58 @@ export function GameProvider({ children }) {
     }))
 
     return true
-  }
+  }, [player.gold])
 
   /**
    * 체력 회복
    *
    * @param {number} amount - 회복할 양 (null이면 전체 회복)
    */
-  const healHp = (amount = null) => {
+  const healHp = useCallback((amount = null) => {
     setPlayer(prev => ({
       ...prev,
       hp: amount === null ? prev.maxHp : Math.min(prev.hp + amount, prev.maxHp)
     }))
-  }
+  }, [])
 
   /**
    * 데미지 받기
    *
    * @param {number} damage - 받을 데미지
    */
-  const takeDamage = (damage) => {
+  const takeDamage = useCallback((damage) => {
     setPlayer(prev => ({
       ...prev,
       hp: Math.max(prev.hp - damage, 0)  // 최소 0
     }))
-  }
+  }, [])
 
   /**
    * 점수 추가
    *
    * @param {number} score - 추가할 점수
    */
-  const addScore = (score) => {
+  const addScore = useCallback((score) => {
     setPlayer(prev => ({
       ...prev,
       totalScore: prev.totalScore + score,
       gamesPlayed: prev.gamesPlayed + 1
     }))
-  }
+  }, [])
 
   /**
    * 스탯 영구 증가 (아이템 구매 시)
    *
    * @param {object} stats - { atk: 5, maxHp: 20 } 형태
    */
-  const increaseStats = (stats) => {
+  const increaseStats = useCallback((stats) => {
     setPlayer(prev => ({
       ...prev,
       atk: prev.atk + (stats.atk || 0),
       maxHp: prev.maxHp + (stats.maxHp || 0),
       hp: prev.hp + (stats.maxHp || 0)  // 최대 체력 증가 시 현재 체력도 증가
     }))
-  }
+  }, [])
 
   // ========== 인벤토리 함수들 ==========
 
@@ -165,22 +165,22 @@ export function GameProvider({ children }) {
    *
    * @param {object} item - 아이템 객체
    */
-  const addItem = (item) => {
+  const addItem = useCallback((item) => {
     setInventory(prev => [...prev, item])
-  }
+  }, [])
 
   /**
    * 아이템 제거
    *
    * @param {number} itemId - 아이템 ID
    */
-  const removeItem = (itemId) => {
+  const removeItem = useCallback((itemId) => {
     setInventory(prev => prev.filter(item => item.id !== itemId))
-  }
+  }, [])
 
   // ========== Context 값 ==========
 
-  const value = {
+  const value = useMemo(() => ({
     // 상태
     player,
     inventory,
@@ -198,7 +198,7 @@ export function GameProvider({ children }) {
     // 인벤토리 함수
     addItem,
     removeItem
-  }
+  }), [player, inventory, setNickname, gainExp, gainGold, spendGold, healHp, takeDamage, addScore, increaseStats, addItem, removeItem])
 
   return (
     <GameContext.Provider value={value}>
@@ -213,6 +213,7 @@ export function GameProvider({ children }) {
  * 사용 예시:
  * const { player, gainExp, gainGold } = useGame()
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useGame() {
   const context = useContext(GameContext)
 
@@ -222,5 +223,3 @@ export function useGame() {
 
   return context
 }
-
-export default GameContext

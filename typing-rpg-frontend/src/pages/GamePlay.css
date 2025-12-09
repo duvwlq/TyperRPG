@@ -5,19 +5,7 @@
 /* Google Fonts - Press Start 2P (픽셀 폰트) */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@300;600&display=swap');
 
-/* CSS 변수 - 낮은 채도의 색상 팔레트 */
-:root {
-    --pixel-bg: #3f4a44;
-    --pixel-panel: #f7f9f8;
-    --pixel-panel-dark: #e9eceb;
-    --pixel-hud-dark: #2f3b37;
-    --pixel-accent: #7a8b7f;
-    --pixel-muted: #9aa39c;
-    --pixel-hp: #b32626;
-    --pixel-mp: #1837b3;
-    --pixel-text-dark: #2b2b2b;
-    --pixel-text-light: #e6efe8;
-}
+/* CSS Variables는 index.css에서 전역으로 정의됨 */
 
 /* 전체 컨테이너 */
 .pixel-game-container {

@@ -2,6 +2,7 @@
    Navbar.jsx - 상단 네비게이션 바
    ============================================ */
 
+import { memo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import './Navbar.css'
@@ -70,4 +71,6 @@ function Navbar() {
   )
 }
 
-export default Navbar
+// React.memo로 감싸서 불필요한 리렌더링 방지
+// player.level, player.gold, location.pathname이 변경될 때만 리렌더링
+export default memo(Navbar)

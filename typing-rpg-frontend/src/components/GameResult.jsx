@@ -2,7 +2,7 @@
    GameResult.jsx - 게임 결과 모달
    ============================================ */
 
-import { useEffect } from 'react'
+import { useEffect, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { saveRanking } from '../utils/storage'
@@ -37,23 +37,25 @@ function GameResult({ result, onClose, onRestart }) {
         accuracy: result.accuracy
       })
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [result.victory, result.score, result.wpm, result.accuracy, player.level])
 
   /**
    * 메인으로 이동
+   * useCallback으로 감싸서 함수 재생성 방지
    */
-  const goHome = () => {
+  const goHome = useCallback(() => {
     onClose()
     navigate('/')
-  }
+  }, [onClose, navigate])
 
   /**
    * 랭킹 보기
+   * useCallback으로 감싸서 함수 재생성 방지
    */
-  const goRanking = () => {
+  const goRanking = useCallback(() => {
     onClose()
     navigate('/ranking')
-  }
+  }, [onClose, navigate])
 
   return (
     <div className="game-result-overlay">
@@ -126,4 +128,5 @@ function GameResult({ result, onClose, onRestart }) {
   )
 }
 
-export default GameResult
+// React.memo로 감싸서 props가 변경될 때만 리렌더링
+export default memo(GameResult)
