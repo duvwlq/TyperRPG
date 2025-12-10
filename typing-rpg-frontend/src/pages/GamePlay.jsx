@@ -43,17 +43,20 @@ function GamePlay() {
 
   // ========== 초기화 ==========
 
-  useEffect(() => {
-    const loadedContent = getContentById(contentId)
+  // useMemo로 content 로드 (ESLint 경고 방지)
+  const loadedContent = useMemo(() => getContentById(contentId), [contentId])
 
+  useEffect(() => {
     if (!loadedContent) {
       navigate('/content')
       return
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setContent(loadedContent)
 
     // 몬스터 초기화
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMonster({
       name: loadedContent.monster.name,
       hp: loadedContent.monster.hp,
@@ -68,7 +71,7 @@ function GamePlay() {
         clearInterval(timerRef.current)
       }
     }
-  }, [contentId, navigate]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loadedContent, navigate, healHp])
 
   // ========== 타이핑 Hook ==========
 
@@ -233,6 +236,7 @@ function GamePlay() {
 
       // 플레이어 사망 확인
       if (player.hp - errorDamage <= 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         endGame(false, {
           wpm,
           accuracy,
@@ -240,7 +244,7 @@ function GamePlay() {
         })
       }
     }
-  }, [errors]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [errors, gameOver, player.hp, takeDamage, endGame, wpm, accuracy, elapsedTime])
 
   // ========== 다시 하기 ==========
 

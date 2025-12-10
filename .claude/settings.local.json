@@ -21,7 +21,16 @@
       "Bash(git push:*)",
       "Bash(npm run lint)",
       "Bash(git commit:*)",
-      "Bash(npm run deploy:*)"
+      "Bash(npm run deploy:*)",
+      "Bash(for file in Ranking.css Shop.css)",
+      "Bash(do echo \"Processing $file...\")",
+      "Bash(done)",
+      "Bash(unzip:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 203392 -Force\")",
+      "Bash(sqlite3:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 259932 -Force\")",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

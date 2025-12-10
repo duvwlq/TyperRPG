@@ -1,0 +1,31 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: typer-rpg-backend
+
+  datasource:
+    url: jdbc:sqlite:typingrpg.db
+    driver-class-name: org.sqlite.JDBC
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false  # 프로덕션에서는 SQL 로그 비활성화
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: false
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    com.typingrpg: INFO

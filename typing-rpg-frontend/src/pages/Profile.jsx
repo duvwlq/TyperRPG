@@ -1,27 +1,59 @@
 /* ============================================
-   Profile.jsx - 픽셀 RPG 스타일 프로필 페이지
+   Profile.jsx - 픽셀 RPG 스타일 프로필 페이지 (API 연동)
    ============================================ */
 
-import { useGame } from '../context/GameContext'
-import './Profile.css'
+import { useState, useEffect } from 'react';
+import { useGame } from '../context/GameContext';
+import { api } from '../api/client';
+import './Profile.css';
 
 function Profile() {
-  const { player } = useGame()
+  const { player, nickname } = useGame();
+  const [gameScores, setGameScores] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (nickname) {
+      loadGameScores();
+    }
+  }, [nickname]);
+
+  const loadGameScores = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getPlayerScores(nickname);
+      setGameScores(data);
+    } catch (err) {
+      console.error('게임 기록 로드 실패:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!player) {
+    return (
+      <div className="pixel-profile-container">
+        <div className="pixel-profile-wrapper">
+          <div className="pixel-profile-card">
+            <h1 className="pixel-profile-title">PROFILE</h1>
+            <div className="pixel-ranking-empty">
+              플레이어 정보를 불러오는 중...
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // 다음 레벨까지 필요한 경험치
-  const expToNextLevel = player.level * 100
-  const expProgress = (player.exp / expToNextLevel) * 100
+  const expToNextLevel = player.level * 100;
+  const expProgress = (player.exp / expToNextLevel) * 100;
 
-  // 임시 게임 통계 (나중에 백엔드에서 가져올 예정)
-  const gameStats = {
-    totalGames: 42,
-    victories: 35,
-    defeats: 7,
-    winRate: 83,
-    highestWPM: 285,
-    totalPlayTime: '12시간 34분',
-    favoriteStage: '슬라임 숲'
-  }
+  // 게임 통계 계산
+  const totalGames = player.gamesPlayed || 0;
+  const victories = player.gamesWon || 0;
+  const defeats = totalGames - victories;
+  const winRate = totalGames > 0 ? ((victories / totalGames) * 100).toFixed(1) : 0;
 
   return (
     <div className="pixel-profile-container">
@@ -39,7 +71,7 @@ function Profile() {
               </div>
 
               {/* 캐릭터 이름 */}
-              <div className="pixel-character-name">플레이어</div>
+              <div className="pixel-character-name">{player.nickname}</div>
 
               {/* 레벨 */}
               <div className="pixel-character-level">Lv. {player.level}</div>
@@ -108,14 +140,14 @@ function Profile() {
                   {/* 총 게임 수 */}
                   <div className="pixel-record-item">
                     <span className="pixel-record-label">총 게임:</span>
-                    <span className="pixel-record-value">{gameStats.totalGames}회</span>
+                    <span className="pixel-record-value">{totalGames}회</span>
                   </div>
 
                   {/* 승리 */}
                   <div className="pixel-record-item">
                     <span className="pixel-record-label">승리:</span>
                     <span className="pixel-record-value" style={{ color: '#66ff66' }}>
-                      {gameStats.victories}회
+                      {victories}회
                     </span>
                   </div>
 
@@ -123,46 +155,53 @@ function Profile() {
                   <div className="pixel-record-item">
                     <span className="pixel-record-label">패배:</span>
                     <span className="pixel-record-value" style={{ color: '#ff6666' }}>
-                      {gameStats.defeats}회
+                      {defeats}회
                     </span>
                   </div>
 
                   {/* 승률 */}
                   <div className="pixel-record-item">
                     <span className="pixel-record-label">승률:</span>
-                    <span className="pixel-record-value">{gameStats.winRate}%</span>
-                  </div>
-
-                  {/* 최고 WPM */}
-                  <div className="pixel-record-item">
-                    <span className="pixel-record-label">최고 WPM:</span>
-                    <span className="pixel-record-value">{gameStats.highestWPM}</span>
-                  </div>
-
-                  {/* 총 플레이 시간 */}
-                  <div className="pixel-record-item">
-                    <span className="pixel-record-label">플레이 시간:</span>
-                    <span className="pixel-record-value">{gameStats.totalPlayTime}</span>
-                  </div>
-
-                  {/* 선호 스테이지 */}
-                  <div className="pixel-record-item">
-                    <span className="pixel-record-label">선호 스테이지:</span>
-                    <span className="pixel-record-value">{gameStats.favoriteStage}</span>
+                    <span className="pixel-record-value">{winRate}%</span>
                   </div>
                 </div>
+              </div>
+
+              {/* 최근 게임 기록 */}
+              <div className="pixel-stats-section">
+                <h3 className="pixel-section-title">최근 게임 기록</h3>
+                {loading ? (
+                  <div className="pixel-ranking-empty">로딩 중...</div>
+                ) : gameScores.length > 0 ? (
+                  <div className="pixel-recent-games">
+                    {gameScores.slice(0, 5).map((score) => (
+                      <div key={score.id} className="pixel-game-record">
+                        <span className="pixel-game-result">
+                          {score.isWin ? '🏆 승리' : '💀 패배'}
+                        </span>
+                        <span className="pixel-game-score">점수: {score.score}</span>
+                        <span className="pixel-game-wpm">WPM: {Math.round(score.wpm)}</span>
+                        <span className="pixel-game-accuracy">
+                          정확도: {score.accuracy.toFixed(1)}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="pixel-ranking-empty">아직 게임 기록이 없습니다.</div>
+                )}
               </div>
             </div>
           </div>
 
           {/* 하단 정보 */}
           <div className="pixel-profile-footer">
-            계속 도전하여 더 강한 타이퍼가 되세요!
+            게임을 플레이하여 더 많은 기록을 세워보세요!
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

@@ -1,225 +1,155 @@
 /* ============================================
-   GameContext.jsx - 게임 전역 상태 관리
+   GameContext.jsx - 게임 전역 상태 관리 (API 연동)
    ============================================ */
 
-import { createContext, useContext, useState, useCallback, useMemo } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
+import { api } from '../api/client';
 
 // Context 생성
-const GameContext = createContext()
+const GameContext = createContext();
 
 /**
  * GameProvider - 게임 상태를 제공하는 Provider 컴포넌트
- *
- * 앱 전체에서 플레이어 정보, 인벤토리 등을 공유
+ * API를 통해 백엔드와 연동하여 데이터를 관리합니다.
  */
 export function GameProvider({ children }) {
-  // ========== 플레이어 상태 ==========
+  // ========== 상태 ==========
+  const [player, setPlayer] = useState(null);
+  const [nickname, setNicknameState] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [player, setPlayer] = useState({
-    nickname: 'Guest',       // 닉네임 (나중에 입력받음)
-    level: 1,                // 레벨
-    exp: 0,                  // 현재 경험치
-    gold: 0,                 // 보유 골드
-    hp: 100,                 // 현재 체력
-    maxHp: 100,              // 최대 체력
-    atk: 10,                 // 공격력
-    totalScore: 0,           // 누적 점수
-    gamesPlayed: 0           // 플레이한 게임 수
-  })
+  // ========== 초기화 ==========
 
-  // ========== 인벤토리 상태 ==========
-
-  const [inventory, setInventory] = useState([])
-
-  // ========== 플레이어 액션 함수들 ==========
-
-  /**
-   * 닉네임 설정
-   */
-  const setNickname = useCallback((nickname) => {
-    setPlayer(prev => ({
-      ...prev,
-      nickname
-    }))
-  }, [])
-
-  /**
-   * 경험치 획득 (레벨업 자동 처리)
-   *
-   * @param {number} exp - 획득할 경험치
-   */
-  const gainExp = useCallback((exp) => {
-    setPlayer(prev => {
-      let newExp = prev.exp + exp
-      let newLevel = prev.level
-      let newMaxHp = prev.maxHp
-      let newAtk = prev.atk
-
-      // 레벨업 체크 (레벨당 필요 경험치 = 레벨 * 100)
-      while (newExp >= newLevel * 100) {
-        newExp -= newLevel * 100  // 경험치 차감
-        newLevel += 1             // 레벨 업
-
-        // 레벨업 시 스탯 증가
-        newMaxHp += 10            // 최대 체력 +10
-        newAtk += 2               // 공격력 +2
-      }
-
-      return {
-        ...prev,
-        exp: newExp,
-        level: newLevel,
-        maxHp: newMaxHp,
-        atk: newAtk,
-        hp: newMaxHp  // 레벨업 시 체력 완전 회복
-      }
-    })
-  }, [])
-
-  /**
-   * 골드 획득
-   *
-   * @param {number} gold - 획득할 골드
-   */
-  const gainGold = useCallback((gold) => {
-    setPlayer(prev => ({
-      ...prev,
-      gold: prev.gold + gold
-    }))
-  }, [])
-
-  /**
-   * 골드 소비 (상점 구매 등)
-   *
-   * @param {number} gold - 소비할 골드
-   * @returns {boolean} 성공 여부
-   */
-  const spendGold = useCallback((gold) => {
-    if (player.gold < gold) {
-      return false  // 골드 부족
+  useEffect(() => {
+    const savedNickname = localStorage.getItem('typingRpg_nickname');
+    if (savedNickname) {
+      loadPlayer(savedNickname);
+    } else {
+      setLoading(false);
     }
-
-    setPlayer(prev => ({
-      ...prev,
-      gold: prev.gold - gold
-    }))
-
-    return true
-  }, [player.gold])
+  }, []);
 
   /**
-   * 체력 회복
-   *
-   * @param {number} amount - 회복할 양 (null이면 전체 회복)
+   * 플레이어 데이터를 로드합니다.
+   * @param {string} nick - 플레이어 닉네임
    */
-  const healHp = useCallback((amount = null) => {
-    setPlayer(prev => ({
-      ...prev,
-      hp: amount === null ? prev.maxHp : Math.min(prev.hp + amount, prev.maxHp)
-    }))
-  }, [])
+  const loadPlayer = useCallback(async (nick) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await api.getPlayer(nick);
+      setPlayer(data);
+      setNicknameState(nick);
+    } catch (err) {
+      console.error('플레이어 로드 실패:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   /**
-   * 데미지 받기
-   *
-   * @param {number} damage - 받을 데미지
+   * 닉네임을 설정하고 플레이어를 로드합니다.
+   * @param {string} nick - 새 닉네임
    */
-  const takeDamage = useCallback((damage) => {
-    setPlayer(prev => ({
-      ...prev,
-      hp: Math.max(prev.hp - damage, 0)  // 최소 0
-    }))
-  }, [])
+  const setNickname = useCallback(async (nick) => {
+    localStorage.setItem('typingRpg_nickname', nick);
+    await loadPlayer(nick);
+  }, [loadPlayer]);
 
   /**
-   * 점수 추가
-   *
-   * @param {number} score - 추가할 점수
+   * 플레이어 정보를 새로고침합니다.
    */
-  const addScore = useCallback((score) => {
-    setPlayer(prev => ({
-      ...prev,
-      totalScore: prev.totalScore + score,
-      gamesPlayed: prev.gamesPlayed + 1
-    }))
-  }, [])
+  const refreshPlayer = useCallback(async () => {
+    if (nickname) {
+      await loadPlayer(nickname);
+    }
+  }, [nickname, loadPlayer]);
 
   /**
-   * 스탯 영구 증가 (아이템 구매 시)
-   *
-   * @param {object} stats - { atk: 5, maxHp: 20 } 형태
+   * 경험치와 골드를 업데이트합니다.
+   * @param {number} exp - 추가할 경험치
+   * @param {number} gold - 추가할 골드
    */
-  const increaseStats = useCallback((stats) => {
-    setPlayer(prev => ({
-      ...prev,
-      atk: prev.atk + (stats.atk || 0),
-      maxHp: prev.maxHp + (stats.maxHp || 0),
-      hp: prev.hp + (stats.maxHp || 0)  // 최대 체력 증가 시 현재 체력도 증가
-    }))
-  }, [])
-
-  // ========== 인벤토리 함수들 ==========
-
-  /**
-   * 아이템 추가
-   *
-   * @param {object} item - 아이템 객체
-   */
-  const addItem = useCallback((item) => {
-    setInventory(prev => [...prev, item])
-  }, [])
+  const updateStats = useCallback(async (exp, gold) => {
+    try {
+      const updated = await api.updatePlayerStats(nickname, exp, gold);
+      setPlayer(updated);
+      return updated;
+    } catch (err) {
+      console.error('스탯 업데이트 실패:', err);
+      throw err;
+    }
+  }, [nickname]);
 
   /**
-   * 아이템 제거
-   *
-   * @param {number} itemId - 아이템 ID
+   * 게임 점수를 저장합니다.
+   * @param {Object} scoreData - 게임 점수 데이터
    */
-  const removeItem = useCallback((itemId) => {
-    setInventory(prev => prev.filter(item => item.id !== itemId))
-  }, [])
+  const saveGameScore = useCallback(async (scoreData) => {
+    try {
+      await api.saveScore(nickname, scoreData);
+      // 점수 저장 후 플레이어 정보 새로고침
+      await refreshPlayer();
+    } catch (err) {
+      console.error('점수 저장 실패:', err);
+      throw err;
+    }
+  }, [nickname, refreshPlayer]);
+
+  /**
+   * 아이템을 구매합니다.
+   * @param {number} itemId - 구매할 아이템 ID
+   */
+  const purchaseItem = useCallback(async (itemId) => {
+    try {
+      await api.purchaseItem(nickname, itemId);
+      // 구매 후 플레이어 정보 새로고침
+      await refreshPlayer();
+    } catch (err) {
+      console.error('아이템 구매 실패:', err);
+      throw err;
+    }
+  }, [nickname, refreshPlayer]);
 
   // ========== Context 값 ==========
 
   const value = useMemo(() => ({
     // 상태
     player,
-    inventory,
+    nickname,
+    loading,
+    error,
 
-    // 플레이어 함수
+    // 함수
     setNickname,
-    gainExp,
-    gainGold,
-    spendGold,
-    healHp,
-    takeDamage,
-    addScore,
-    increaseStats,
-
-    // 인벤토리 함수
-    addItem,
-    removeItem
-  }), [player, inventory, setNickname, gainExp, gainGold, spendGold, healHp, takeDamage, addScore, increaseStats, addItem, removeItem])
+    refreshPlayer,
+    updateStats,
+    saveGameScore,
+    purchaseItem,
+  }), [player, nickname, loading, error, setNickname, refreshPlayer, updateStats, saveGameScore, purchaseItem]);
 
   return (
     <GameContext.Provider value={value}>
       {children}
     </GameContext.Provider>
-  )
+  );
 }
 
 /**
  * useGame Hook - GameContext 사용
  *
  * 사용 예시:
- * const { player, gainExp, gainGold } = useGame()
+ * const { player, nickname, updateStats, saveGameScore } = useGame()
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useGame() {
-  const context = useContext(GameContext)
+  const context = useContext(GameContext);
 
   if (!context) {
-    throw new Error('useGame must be used within GameProvider')
+    throw new Error('useGame must be used within GameProvider');
   }
 
-  return context
+  return context;
 }

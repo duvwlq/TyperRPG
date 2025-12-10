@@ -1,0 +1,18 @@
+package com.typingrpg.backend.repository;
+
+import com.typingrpg.backend.entity.GameScore;
+import com.typingrpg.backend.entity.Player;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface GameScoreRepository extends JpaRepository<GameScore, Long> {
+
+    List<GameScore> findTop10ByOrderByScoreDesc();
+
+    List<GameScore> findByPlayerOrderByPlayedAtDesc(Player player);
+
+    List<GameScore> findByPlayerIdOrderByScoreDesc(Long playerId);
+}

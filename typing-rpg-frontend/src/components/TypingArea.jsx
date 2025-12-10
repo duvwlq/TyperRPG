@@ -2,7 +2,7 @@
    TypingArea.jsx - 타이핑 입력 영역
    ============================================ */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, memo } from 'react'
 import './TypingArea.css'
 
 /**
@@ -93,4 +93,5 @@ function TypingArea({ targetText: _targetText, characterStatus, onKeyPress, inpu
   )
 }
 
-export default TypingArea
+// React.memo로 감싸서 props가 변경될 때만 리렌더링
+export default memo(TypingArea)
