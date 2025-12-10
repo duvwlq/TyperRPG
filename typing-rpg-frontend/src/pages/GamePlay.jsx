@@ -102,6 +102,9 @@ function GamePlay() {
   // ========== 게임 종료 ==========
 
   const endGame = useCallback((isVictory, finalStats) => {
+    // player null 체크
+    if (!player) return;
+
     // 타이머 정지
     if (timerRef.current) {
       clearInterval(timerRef.current)
