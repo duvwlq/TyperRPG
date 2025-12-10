@@ -113,6 +113,66 @@ export function GameProvider({ children }) {
     }
   }, [nickname, refreshPlayer]);
 
+  // ========== 로컬 게임 플레이 함수 (즉시 반영) ==========
+
+  /**
+   * 경험치 획득 (로컬 상태 업데이트)
+   */
+  const gainExp = useCallback((amount) => {
+    if (!player) return;
+
+    setPlayer(prev => {
+      const newExp = prev.exp + amount;
+      const expForNextLevel = prev.level * 100;
+
+      if (newExp >= expForNextLevel) {
+        // 레벨업
+        return {
+          ...prev,
+          level: prev.level + 1,
+          exp: newExp - expForNextLevel,
+          maxHp: prev.maxHp + 20,
+          hp: prev.maxHp + 20,
+          atk: prev.atk + 5
+        };
+      }
+
+      return { ...prev, exp: newExp };
+    });
+  }, [player]);
+
+  /**
+   * 골드 획득 (로컬 상태 업데이트)
+   */
+  const gainGold = useCallback((amount) => {
+    if (!player) return;
+    setPlayer(prev => ({ ...prev, gold: prev.gold + amount }));
+  }, [player]);
+
+  /**
+   * 데미지 받기 (로컬 상태 업데이트)
+   */
+  const takeDamage = useCallback((amount) => {
+    if (!player) return;
+    setPlayer(prev => ({ ...prev, hp: Math.max(0, prev.hp - amount) }));
+  }, [player]);
+
+  /**
+   * HP 회복 (로컬 상태 업데이트)
+   */
+  const healHp = useCallback(() => {
+    if (!player) return;
+    setPlayer(prev => ({ ...prev, hp: prev.maxHp }));
+  }, [player]);
+
+  /**
+   * 점수 추가 (로컬 상태 업데이트)
+   */
+  const addScore = useCallback((amount) => {
+    if (!player) return;
+    setPlayer(prev => ({ ...prev, score: (prev.score || 0) + amount }));
+  }, [player]);
+
   // ========== Context 값 ==========
 
   const value = useMemo(() => ({
@@ -122,13 +182,20 @@ export function GameProvider({ children }) {
     loading,
     error,
 
-    // 함수
+    // API 함수
     setNickname,
     refreshPlayer,
     updateStats,
     saveGameScore,
     purchaseItem,
-  }), [player, nickname, loading, error, setNickname, refreshPlayer, updateStats, saveGameScore, purchaseItem]);
+
+    // 로컬 게임 플레이 함수
+    gainExp,
+    gainGold,
+    takeDamage,
+    healHp,
+    addScore,
+  }), [player, nickname, loading, error, setNickname, refreshPlayer, updateStats, saveGameScore, purchaseItem, gainExp, gainGold, takeDamage, healHp, addScore]);
 
   return (
     <GameContext.Provider value={value}>
