@@ -147,7 +147,7 @@ function GamePlay() {
       gold: goldGained,
       levelUp
     })
-  }, [completedSentences, player.level, content, gainExp, gainGold, addScore])
+  }, [completedSentences, player, content, gainExp, gainGold, addScore])
 
   // ========== 문장 완료 처리 ==========
 

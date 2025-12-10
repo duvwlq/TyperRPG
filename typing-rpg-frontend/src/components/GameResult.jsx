@@ -28,16 +28,16 @@ function GameResult({ result, onClose, onRestart }) {
 
   // 승리 시 랭킹에 저장
   useEffect(() => {
-    if (result.victory) {
+    if (result.victory && player) {
       saveRanking({
-        nickname: '플레이어', // 나중에 닉네임 시스템 추가
+        nickname: player.nickname || '플레이어',
         level: player.level,
         score: result.score,
         wpm: result.wpm,
         accuracy: result.accuracy
       })
     }
-  }, [result.victory, result.score, result.wpm, result.accuracy, player.level])
+  }, [result.victory, result.score, result.wpm, result.accuracy, player])
 
   /**
    * 메인으로 이동

@@ -63,10 +63,12 @@ function Navbar() {
       </ul>
 
       {/* 플레이어 정보 */}
-      <div className="navbar-player">
-        <span className="navbar-level">Lv.{player.level}</span>
-        <span className="navbar-gold">💰 {player.gold}G</span>
-      </div>
+      {player && (
+        <div className="navbar-player">
+          <span className="navbar-level">Lv.{player.level}</span>
+          <span className="navbar-gold">💰 {player.gold}G</span>
+        </div>
+      )}
     </nav>
   )
 }

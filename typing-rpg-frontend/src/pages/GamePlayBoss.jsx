@@ -99,6 +99,9 @@ function GamePlayBoss() {
   // ========== 게임 종료 ==========
 
   const endGame = useCallback((isVictory, finalStats) => {
+    // player null 체크
+    if (!player) return;
+
     // 타이머 정지
     if (timerRef.current) {
       clearInterval(timerRef.current)
@@ -141,7 +144,7 @@ function GamePlayBoss() {
       gold: goldGained,
       levelUp
     })
-  }, [completedSentences, player.level, content, gainExp, gainGold, addScore])
+  }, [completedSentences, player, content, gainExp, gainGold, addScore])
 
   // ========== 문장 완료 처리 ==========
 
