@@ -275,11 +275,6 @@ function GamePlay() {
   // ========== 입력 처리 ==========
 
   const handleInputKeyDown = (e) => {
-    // 첫 입력 시 타이머 시작
-    if (!started) {
-      startTimer()
-    }
-
     // Enter 키 처리
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -288,16 +283,6 @@ function GamePlay() {
 
     // 타이핑 Hook에 전달
     handleKeyPress(e)
-  }
-
-  const handleInputChange = (e) => {
-    const value = e.target.value
-    setInputValue(value)
-
-    // 한글 조합 중이 아닐 때만 useTyping에 전달 (nativeEvent.isComposing 체크)
-    if (!e.nativeEvent.isComposing) {
-      setTypingInput(value)
-    }
   }
 
   // ========== 컨트롤 버튼 핸들러 ==========
@@ -347,21 +332,100 @@ function GamePlay() {
     <div className="pixel-game-container">
       <div className="pixel-game-wrapper">
         <div className="pixel-game-card">
-          {/* 상단 타이머 */}
-          <div className="pixel-top-row">
-            <div style={{ position: 'relative', width: '100%' }}>
-                <div style={{ textAlign: 'center', fontSize: '36px', fontWeight: 'bold' }}>
-                    00:{String(remaining).padStart(2, '0')}
+          <h1 className="pixel-game-title">타이핑 플레이</h1>
+
+          <div className="pixel-game-layout">
+            {/* 좌측: 지역/몬스터 정보 */}
+            <div className="pixel-game-info">
+              {/* 지역 정보 */}
+              <div className="pixel-info-section">
+                <h3 className="pixel-info-title">지역</h3>
+                <div className="pixel-info-content">
+                  <div className="pixel-info-row">
+                    <span className="pixel-info-label">이름:</span>
+                    <span className="pixel-info-value">{content.title}</span>
+                  </div>
+                  <div className="pixel-info-row">
+                    <span className="pixel-info-label">난이도:</span>
+                    <span className="pixel-info-value">{content.difficulty.toUpperCase()}</span>
+                  </div>
+                  <div className="pixel-info-row">
+                    <span className="pixel-info-label">권장 WPM:</span>
+                    <span className="pixel-info-value">{content.recommendedWPM}</span>
+                  </div>
                 </div>
-              <div className="pixel-core-bar" aria-hidden="true">
-                {/* 몬스터 HP 바 */}
-                <div
-                  className="pixel-gage-fill"
-                  style={{ width: `${(monster.hp / monster.maxHp) * 100}%`, background: 'var(--pixel-hp)' }}
-                ></div>
+              </div>
+
+              {/* 몬스터 정보 */}
+              <div className="pixel-info-section">
+                <h3 className="pixel-info-title">몬스터</h3>
+                <div className="pixel-info-content">
+                  <div className="pixel-info-row">
+                    <span className="pixel-info-label">이름:</span>
+                    <span className="pixel-info-value">{monster.name}</span>
+                  </div>
+                  <div className="pixel-info-row">
+                    <span className="pixel-info-label">HP:</span>
+                    <span className="pixel-info-value">{monster.hp} / {monster.maxHp}</span>
+                  </div>
+                  {/* 몬스터 HP 바 */}
+                  <div className="pixel-hp-bar">
+                    <div
+                      className="pixel-hp-fill"
+                      style={{ width: `${(monster.hp / monster.maxHp) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 플레이어 정보 */}
+              <div className="pixel-info-section">
+                <h3 className="pixel-info-title">플레이어</h3>
+                <div className="pixel-info-content">
+                  <div className="pixel-info-row">
+                    <span className="pixel-info-label">HP:</span>
+                    <span className="pixel-info-value">{player.hp} / {player.maxHp}</span>
+                  </div>
+                  {/* 플레이어 HP 바 */}
+                  <div className="pixel-hp-bar player">
+                    <div
+                      className="pixel-hp-fill"
+                      style={{ width: `${Math.round((player.hp / player.maxHp) * 100)}%` }}
+                    ></div>
+                  </div>
+                  <div className="pixel-info-row">
+                    <span className="pixel-info-label">문장:</span>
+                    <span className="pixel-info-value">{currentSentenceIndex + 1} / {content.sentences.length}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 타이머 */}
+              <div className="pixel-info-section">
+                <h3 className="pixel-info-title">시간</h3>
+                <div className="pixel-timer-display">
+                  00:{String(remaining).padStart(2, '0')}
+                </div>
               </div>
             </div>
-          </div>
+
+            {/* 우측: 타이핑 플레이 영역 */}
+            <div className="pixel-game-play">
+              {/* 상단 타이머 */}
+              <div className="pixel-top-row">
+                <div style={{ position: 'relative', width: '100%' }}>
+                    <div style={{ textAlign: 'center', fontSize: '36px', fontWeight: 'bold' }}>
+                        00:{String(remaining).padStart(2, '0')}
+                    </div>
+                  <div className="pixel-core-bar" aria-hidden="true">
+                    {/* 몬스터 HP 바 */}
+                    <div
+                      className="pixel-gage-fill"
+                      style={{ width: `${(monster.hp / monster.maxHp) * 100}%`, background: 'var(--pixel-hp)' }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
 
           {/* 메인 스크린 */}
           <div className="pixel-screen">
@@ -442,30 +506,37 @@ function GamePlay() {
                 ))}
               </div>
 
-              {/* 입력 행 */}
+              {/* 입력 행 - contenteditable */}
               <div className="pixel-type-row">
-                <input
+                <div
                   id="pixel-input-field"
-                  className={`pixel-input ${isWrongInput ? 'wrong' : ''}`}
-                  placeholder="위 문장을 타이핑 하세요."
-                  value={inputValue}
-                  onChange={handleInputChange}
+                  className={`pixel-contenteditable ${isWrongInput ? 'wrong' : ''}`}
+                  contentEditable={true}
+                  suppressContentEditableWarning={true}
+                  onInput={(e) => {
+                    const value = e.target.textContent || ''
+                    setInputValue(value)
+                    setTypingInput(value)
+
+                    // 첫 입력 시 타이머 시작
+                    if (!started && value.length > 0) {
+                      startTimer()
+                    }
+                  }}
                   onKeyDown={handleInputKeyDown}
                   onCompositionStart={() => setIsComposing(true)}
                   onCompositionEnd={(e) => {
                     setIsComposing(false)
-                    // 조합 완료 시 최종 값 전달
-                    setTypingInput(e.target.value)
+                    const value = e.target.textContent || ''
+                    setTypingInput(value)
                   }}
-                  autoComplete="off"
-                  autoCorrect="off"
                   spellCheck="false"
+                  data-placeholder="위 문장을 타이핑 하세요."
                   autoFocus
                 />
-
-
               </div>
             </div>
+
 
             {/* 하단 행 */}
               {/* 하단 행 */}
@@ -499,8 +570,10 @@ function GamePlay() {
                   </div>
               </div>
 
+            </div>
           </div>
         </div>
+      </div>
       </div>
 
       {/* 결과 모달 */}

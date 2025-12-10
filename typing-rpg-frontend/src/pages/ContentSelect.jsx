@@ -1,5 +1,5 @@
 /* ============================================
-   ContentSelect.jsx - 픽셀 RPG 스타일 콘텐츠 선택 페이지
+   ContentSelect.jsx - 픽셀 RPG 스타일 콘텐츠 선택 페이지 (2-컬럼 레이아웃)
    ============================================ */
 
 import { useState } from 'react'
@@ -13,28 +13,32 @@ function ContentSelect() {
     // 모든 콘텐츠 가져오기
     const contents = getAllContents()
 
-    // 선택된 콘텐츠 ID
+    // 선택된 콘텐츠 ID와 모드
     const [selectedId, setSelectedId] = useState(contents[0]?.id || null)
+    const [selectedMode, setSelectedMode] = useState('infinite') // 'infinite' or 'boss'
 
     // 선택된 콘텐츠 정보
     const selectedContent = contents.find(c => c.id === selectedId)
 
     /**
-     * 무한 타이핑 모드 시작
+     * GO 버튼 - 선택된 모드에 따라 네비게이션
      */
-    const handleStartInfinite = () => {
+    const handleGo = () => {
         if (selectedId) {
-            navigate(`/game/${selectedId}`)
+            if (selectedMode === 'infinite') {
+                navigate(`/game/${selectedId}`)
+            } else {
+                navigate(`/game-boss/${selectedId}`)
+            }
         }
     }
 
     /**
-     * 보스 배틀 모드 시작
+     * 지역 선택 핸들러
      */
-    const handleStartBoss = () => {
-        if (selectedId) {
-            navigate(`/game-boss/${selectedId}`)
-        }
+    const handleSelectRegion = (id, mode) => {
+        setSelectedId(id)
+        setSelectedMode(mode)
     }
 
     /**
@@ -50,97 +54,145 @@ function ContentSelect() {
         }
     }
 
+    /**
+     * 난이도별 배경 그라데이션
+     */
+    const getBackgroundGradient = (difficulty) => {
+        switch (difficulty) {
+            case 'easy':
+                return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            case 'normal':
+                return 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+            case 'hard':
+                return 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+            case 'very-hard':
+                return 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+            default:
+                return 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        }
+    }
+
     return (
         <div className="pixel-content-container">
             <div className="pixel-content-wrapper">
                 <div className="pixel-content-card">
                     {/* 제목 */}
-                    <h1 className="pixel-content-title">스테이지 선택</h1>
+                    <h1 className="pixel-content-title">모드/지역 선택</h1>
 
                     <div className="pixel-content-layout">
-                        {/* 좌측: 콘텐츠 목록 */}
+                        {/* 좌측: 모드/지역 선택 영역 */}
                         <div className="pixel-content-list">
-                            <h3 className="pixel-list-title">문장 세트</h3>
-                            {contents.map(content => (
-                                <div
-                                    key={content.id}
-                                    className={`pixel-content-item ${selectedId === content.id ? 'selected' : ''}`}
-                                    onClick={() => setSelectedId(content.id)}
-                                >
-                                    <div className="pixel-item-title">{content.title}</div>
-                                    <div
-                                        className="pixel-item-difficulty"
-                                        style={{ color: getDifficultyColor(content.difficulty) }}
-                                    >
-                                        {content.difficulty.toUpperCase()}
-                                    </div>
+                            {/* Infinite Typing 섹션 */}
+                            <div className="pixel-mode-section">
+                                <h3 className="pixel-mode-title">⚡ Infinite Typing</h3>
+                                <div className="pixel-region-cards">
+                                    {contents.map(content => (
+                                        <div
+                                            key={`infinite-${content.id}`}
+                                            className={`pixel-region-card ${
+                                                selectedId === content.id && selectedMode === 'infinite' ? 'selected' : ''
+                                            }`}
+                                            onClick={() => handleSelectRegion(content.id, 'infinite')}
+                                        >
+                                            <div className="pixel-card-title">{content.title}</div>
+                                            <div
+                                                className="pixel-card-difficulty"
+                                                style={{ color: getDifficultyColor(content.difficulty) }}
+                                            >
+                                                {content.difficulty.toUpperCase()}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
+
+                            {/* Boss Battle 섹션 */}
+                            <div className="pixel-mode-section">
+                                <h3 className="pixel-mode-title">⚔️ Boss Battle</h3>
+                                <div className="pixel-region-cards">
+                                    {contents.map(content => (
+                                        <div
+                                            key={`boss-${content.id}`}
+                                            className={`pixel-region-card ${
+                                                selectedId === content.id && selectedMode === 'boss' ? 'selected' : ''
+                                            }`}
+                                            onClick={() => handleSelectRegion(content.id, 'boss')}
+                                        >
+                                            <div className="pixel-card-title">{content.title}</div>
+                                            <div
+                                                className="pixel-card-difficulty"
+                                                style={{ color: getDifficultyColor(content.difficulty) }}
+                                            >
+                                                {content.difficulty.toUpperCase()}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
 
-                        {/* 우측: 선택된 콘텐츠 상세 */}
+                        {/* 우측: 선택된 지역 상세 정보 */}
                         {selectedContent && (
                             <div className="pixel-content-detail">
-                                <h2 className="pixel-detail-title">{selectedContent.title}</h2>
-
-                                <div className="pixel-detail-description">
-                                    {selectedContent.description}
-                                </div>
-
-                                <div className="pixel-detail-stats">
-                                    {/* 난이도 */}
-                                    <div className="pixel-stat-row">
-                                        <span className="pixel-stat-label">난이도:</span>
-                                        <span
-                                            className="pixel-stat-value"
-                                            style={{ color: getDifficultyColor(selectedContent.difficulty) }}
-                                        >
-                      {selectedContent.difficulty.toUpperCase()}
-                    </span>
-                                    </div>
-
-                                    {/* 권장 WPM */}
-                                    <div className="pixel-stat-row">
-                                        <span className="pixel-stat-label">권장 WPM:</span>
-                                        <span className="pixel-stat-value">{selectedContent.recommendedWPM}</span>
-                                    </div>
-
-                                    {/* 문장 수 */}
-                                    <div className="pixel-stat-row">
-                                        <span className="pixel-stat-label">문장 수:</span>
-                                        <span className="pixel-stat-value">5개</span>
-                                    </div>
-
-                                    {/* 몬스터 */}
-                                    <div className="pixel-stat-row">
-                                        <span className="pixel-stat-label">몬스터:</span>
-                                        <span className="pixel-stat-value">{selectedContent.monster.name}</span>
-                                    </div>
-
-                                    {/* 보상 */}
-                                    <div className="pixel-stat-row">
-                                        <span className="pixel-stat-label">보상:</span>
-                                        <span className="pixel-stat-value">
-                      EXP {selectedContent.monster.exp}, GOLD {selectedContent.monster.gold}
-                    </span>
+                                {/* 배경 이미지 영역 */}
+                                <div
+                                    className="pixel-detail-background"
+                                    style={{
+                                        background: getBackgroundGradient(selectedContent.difficulty)
+                                    }}
+                                >
+                                    <div className="pixel-detail-mode-badge">
+                                        {selectedMode === 'infinite' ? '⚡ Infinite Typing' : '⚔️ Boss Battle'}
                                     </div>
                                 </div>
 
-                                {/* 모드 선택 버튼 */}
-                                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                                {/* 지역 정보 */}
+                                <div className="pixel-detail-info">
+                                    <h2 className="pixel-detail-title">{selectedContent.title}</h2>
+
+                                    <div className="pixel-detail-description">
+                                        {selectedContent.description}
+                                    </div>
+
+                                    <div className="pixel-detail-stats">
+                                        {/* 난이도 */}
+                                        <div className="pixel-stat-row">
+                                            <span className="pixel-stat-label">난이도:</span>
+                                            <span
+                                                className="pixel-stat-value"
+                                                style={{ color: getDifficultyColor(selectedContent.difficulty) }}
+                                            >
+                                                {selectedContent.difficulty.toUpperCase()}
+                                            </span>
+                                        </div>
+
+                                        {/* 권장 WPM */}
+                                        <div className="pixel-stat-row">
+                                            <span className="pixel-stat-label">권장 WPM:</span>
+                                            <span className="pixel-stat-value">{selectedContent.recommendedWPM}</span>
+                                        </div>
+
+                                        {/* 몬스터 */}
+                                        <div className="pixel-stat-row">
+                                            <span className="pixel-stat-label">몬스터:</span>
+                                            <span className="pixel-stat-value">{selectedContent.monster.name}</span>
+                                        </div>
+
+                                        {/* 보상 */}
+                                        <div className="pixel-stat-row">
+                                            <span className="pixel-stat-label">보상:</span>
+                                            <span className="pixel-stat-value">
+                                                EXP +{selectedContent.monster.exp} | GOLD +{selectedContent.monster.gold}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* GO 버튼 */}
                                     <button
-                                        className="pixel-start-btn"
-                                        onClick={handleStartInfinite}
-                                        style={{ flex: 1 }}
+                                        className="pixel-go-btn"
+                                        onClick={handleGo}
                                     >
-                                        무한 타이핑
-                                    </button>
-                                    <button
-                                        className="pixel-start-btn"
-                                        onClick={handleStartBoss}
-                                        style={{ flex: 1, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                                    >
-                                        보스 배틀
+                                        GO →
                                     </button>
                                 </div>
                             </div>
