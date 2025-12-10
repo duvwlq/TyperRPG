@@ -26,6 +26,17 @@ export function GameProvider({ children }) {
     if (savedNickname) {
       loadPlayer(savedNickname);
     } else {
+      // 닉네임이 없으면 기본 게스트 플레이어 생성 (오프라인 모드)
+      setPlayer({
+        nickname: 'Guest',
+        level: 1,
+        exp: 0,
+        hp: 100,
+        maxHp: 100,
+        atk: 10,
+        gold: 0,
+        score: 0
+      });
       setLoading(false);
     }
   }, []);
@@ -44,6 +55,18 @@ export function GameProvider({ children }) {
     } catch (err) {
       console.error('플레이어 로드 실패:', err);
       setError(err.message);
+
+      // API 실패 시 기본 게스트 플레이어 생성 (오프라인 모드)
+      setPlayer({
+        nickname: 'Guest',
+        level: 1,
+        exp: 0,
+        hp: 100,
+        maxHp: 100,
+        atk: 10,
+        gold: 0,
+        score: 0
+      });
     } finally {
       setLoading(false);
     }
