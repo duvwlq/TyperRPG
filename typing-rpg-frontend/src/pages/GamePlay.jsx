@@ -324,7 +324,7 @@ function GamePlay() {
 
   // ========== 렌더링 ==========
 
-  if (!content || !monster) {
+  if (!content || !monster || !player) {
     return <div className="pixel-loading">로딩 중...</div>
   }
 
